@@ -11,8 +11,18 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function() {
     Route::get('/tweets', 'TweetController@index')->name('home');
     Route::post('/tweets', 'TweetController@store');
-});
 
-Route::get('profiles/{user}', 'ProfileController@show')->name('profile');
+    Route::post('/profiles/{user}/follow', 'FollowController@store')->name('follow');
+
+    Route::middleware('can:edit,user')->group(function () {
+        Route::get('/profiles/{user}/edit', 'ProfileController@edit');
+        Route::patch('/profiles/{user}', 'ProfileController@update');
+    });
+
+    Route::get('profiles/{user}', 'ProfileController@show')->name('profile');
+
+    // Invokable controller
+    Route::get('/explore', 'ExploreController')->name('explore');
+});
 
 Auth::routes();
